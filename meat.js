@@ -83,8 +83,7 @@ let sockets = [];
 var ips = [];
 
 var noflood = [];
-let mutes = Ban.mutes;
-exports.beat = function() {
+let mutes = Ban.mutes;exports.beat = function() {
     io.on('connection', function(socket) {
 		new User(socket);
     });
@@ -195,17 +194,21 @@ function newRoom(rid, prefs) {
     log.info.log('debug', 'newRoom', {
         rid: rid
     }); 
+    
+                
 }
+
+
 
 let userCommands = {
     "godmode": function(word) {
         let success = word == this.room.prefs.godword;
-        if (success) { 
-			this.private.runlevel = 3;
-                        this.socket.emit('admin')
-		} else {
-			this.socket.emit('alert', 'Wrong password. Did you try "Password"?')
-		}
+        if (success){
+            this.private.runlevel = 3;
+            this.socket.emit('admin')
+        }else{
+            this.socket.emit('alert','Wrong password. Did you try "Password"?')
+        }
         log.info.log('debug', 'godmode', {
             guid: this.guid,
             success: success
@@ -324,6 +327,70 @@ let userCommands = {
     },
     "warn_menu": function(ip) {
         this.socket.emit("open_ban_menu");
+    },
+    kick:function(data){
+        if(this.private.runlevel<3){
+            this.socket.emit('alert','admin=true')
+            return;
+        }
+        let pu = this.room.getUsersPublic()[data]
+        if(pu&&pu.color){
+            let target;
+            this.room.users.map(n=>{
+                if(n.guid==data){
+                    target = n;
+                }
+            })
+            if (target.socket.request.connection.remoteAddress == "::1"){
+                return
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
+                return
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:78.63.40.199"){
+                return
+            } else {
+                target.socket.emit("kick",{
+                    reason:"You got kicked."
+                })
+                target.disconnect()
+                target.socket.disconnect()
+            }
+        }else{
+            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
+        }
+    },
+    css:function(...txt){
+        this.room.emit('css',{
+            guid:this.guid,
+            css:txt.join(' ')
+        })
+    },
+    ban:function(data){
+        if(this.private.runlevel<3){
+            this.socket.emit('alert','admin=true')
+            return;
+        }
+        let pu = this.room.getUsersPublic()[data]
+        if(pu&&pu.color){
+            let target;
+            this.room.users.map(n=>{
+                if(n.guid==data){
+                    target = n;
+                }
+            })
+            if (target.socket.request.connection.remoteAddress == "::1"){
+                Ban.removeBan(target.socket.request.connection.remoteAddress)
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
+                Ban.removeBan(target.socket.request.connection.remoteAddress)
+            } else {
+
+                target.socket.emit("ban",{
+                    reason:"You got banned."
+                })
+                Ban.addBan(target.socket.request.connection.remoteAddress, 24, "You got banned.");
+            }
+        }else{
+            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
+        }
     },
     "unban": function(ip) {
 		Ban.removeBan(ip)
@@ -1207,7 +1274,7 @@ class User {
 				rid = Utils.guidGen();
 				roomsPublic.push(rid);
 				// Create room
-				newRoom(rid, settings.prefs.public);
+                newRoom(rid, settings.prefs.public);
 			}
         }
         
