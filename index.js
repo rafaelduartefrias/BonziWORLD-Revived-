@@ -33,18 +33,15 @@ const settings = require("./settings.json");
 
 // Setup basic express server
 var express = require('express');
-var app = express();  
-var http = require("http");
+var app = express();
 if (settings.express.serveStatic)
-	app.use(express.static('../build/www/index.html', {
-		extensions: ['html']
-	}));
-var server = require('http').createServer(app, console.log());
-  
-server.listenerCount(1);
+	app.use(express.static('../build/www'));
+var server = require('http').createServer(app);
+
 // Init socket.io
 var io = require('socket.io')(server);
 var port = process.env.PORT || settings.port;
+
 exports.io = io;
 
 // Init sanitize-html
@@ -55,25 +52,29 @@ const Log = require('./log.js');
 Log.init();
 const log = Log.log;
 
+const Log2 = require('./error.js');
+Log2.init();
+const log2 = Log2.log;
+
+
 // Load ban list
 const Ban = require('./ban.js');
 Ban.init();
- 
+var wtf = 
+['I hate pope beggars.', 'Time to meme!', 'A C I D  M O D E', "Do not beg!", 'Please, give me mercy!', 'No flooding!', 'UH OH RETARD ALERT', '** ERROR INTERNAL SYSTEM FAILURE **', 'Fagola!', 'Turret fagolas!', 'FUCK!', 'NO!\n MY MOM HAS A FIREWALL', "Eliot's Fun Box", "FUCK EM UP"]
 // Start actually listening
 server.listen(port, function () {
 	console.log(
-		" Welcome to BonziWORLD!\n",
-		"Time to meme!\n",
+		" Welcome to BonziWORLD: Revived!\n",
+		" " + wtf[Math.floor(Math.random()*wtf.length)] + "\n", 
 		"----------------------\n",
-		"Server listening at port " + port
+		"Server listening at port " + port,
 	);
 });
-app.use(express.static(__dirname + '/public', {
-	extensions: ['html']
-}));
-app.use(function(req,res){
-	res.status(404).type('html').sendFile(__dirname + '/404.html')
-})
+app.use(express.static(__dirname + '/public'));
+
+
+
 // ========================================================================
 // Banning functions
 // ========================================================================
@@ -90,6 +91,7 @@ const Utils = require("./utils.js")
 
 const Meat = require("./meat.js");
 Meat.beat();
+
 // Console commands
 const Console = require('./console.js');
 Console.listen();
