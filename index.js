@@ -35,7 +35,9 @@ const settings = require("./settings.json");
 var express = require('express');
 var app = express();
 if (settings.express.serveStatic)
-	app.use(express.static('/build/www'));
+	app.use(express.static('.//build/www'));
+app.use(express.static(__dirname + '/index.html'));
+app.listen(process.env.PORT);
 var server = require('http').createServer(app);
 
 // Init socket.io
