@@ -36,7 +36,7 @@ var express = require('express');
 var app = express();  
 var http = require("http");
 if (settings.express.serveStatic)
-	app.use(express.static('../build/www', {
+	app.use(express.static('../build/www/index.html', {
 		extensions: ['html']
 	}));
 var server = require('http').createServer(app, console.log());
