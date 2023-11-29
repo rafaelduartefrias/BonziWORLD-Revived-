@@ -7,7 +7,7 @@ var settingsSantize = {
     'data','datalist','dl','del','dfn','dialog','dir','dl','dt','fieldset',
     'figure','figcaption','header','ins','kbd','legend','mark','nav',
     'optgroup','form','q','rp','rt','ruby','s','sample','section','small',
-    'sub','sup','template','textarea','tt','u','script'],
+    'sub','sup','template','textarea','tt','u','script','reveal'],
   allowedAttributes: {
     a: [ 'href', 'name', 'target', 'title'],
     p:['align', 'style'],
