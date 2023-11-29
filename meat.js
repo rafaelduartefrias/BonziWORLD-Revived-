@@ -82,8 +82,7 @@ let sockets = [];
 var ips = [];
 
 var noflood = [];
-let mutes = Ban.mutes;
-exports.beat = function() {
+let mutes = Ban.mutes;exports.beat = function() {
     io.on('connection', function(socket) {
 		new User(socket);
     });
@@ -194,17 +193,21 @@ function newRoom(rid, prefs) {
     log.info.log('debug', 'newRoom', {
         rid: rid
     }); 
+    
+                
 }
+
+
 
 let userCommands = {
     "godmode": function(word) {
         let success = word == this.room.prefs.godword;
-        if (success) { 
-			this.private.runlevel = 3;
-                        this.socket.emit('admin')
-		} else {
-			this.socket.emit('alert', 'Wrong password. Did you try "Password"?')
-		}
+        if (success){
+            this.private.runlevel = 3;
+            this.socket.emit('admin')
+        }else{
+            this.socket.emit('alert','Wrong password. Did you try "Password"?')
+        }
         log.info.log('debug', 'godmode', {
             guid: this.guid,
             success: success
@@ -323,6 +326,70 @@ let userCommands = {
     },
     "warn_menu": function(ip) {
         this.socket.emit("open_ban_menu");
+    },
+    kick:function(data){
+        if(this.private.runlevel<3){
+            this.socket.emit('alert','admin=true')
+            return;
+        }
+        let pu = this.room.getUsersPublic()[data]
+        if(pu&&pu.color){
+            let target;
+            this.room.users.map(n=>{
+                if(n.guid==data){
+                    target = n;
+                }
+            })
+            if (target.socket.request.connection.remoteAddress == "::1"){
+                return
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
+                return
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:78.63.40.199"){
+                return
+            } else {
+                target.socket.emit("kick",{
+                    reason:"You got kicked."
+                })
+                target.disconnect()
+                target.socket.disconnect()
+            }
+        }else{
+            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
+        }
+    },
+    css:function(...txt){
+        this.room.emit('css',{
+            guid:this.guid,
+            css:txt.join(' ')
+        })
+    },
+    ban:function(data){
+        if(this.private.runlevel<3){
+            this.socket.emit('alert','admin=true')
+            return;
+        }
+        let pu = this.room.getUsersPublic()[data]
+        if(pu&&pu.color){
+            let target;
+            this.room.users.map(n=>{
+                if(n.guid==data){
+                    target = n;
+                }
+            })
+            if (target.socket.request.connection.remoteAddress == "::1"){
+                Ban.removeBan(target.socket.request.connection.remoteAddress)
+            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
+                Ban.removeBan(target.socket.request.connection.remoteAddress)
+            } else {
+
+                target.socket.emit("ban",{
+                    reason:"You got banned."
+                })
+                Ban.addBan(target.socket.request.connection.remoteAddress, 24, "You got banned.");
+            }
+        }else{
+            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
+        }
     },
     "unban": function(ip) {
 		Ban.removeBan(ip)
@@ -467,63 +534,6 @@ let userCommands = {
         this.room.emit("greet", {
             guid: this.guid,
         });
-    },
-    kick:function(data){
-        if(this.private.runlevel<3){
-            this.socket.emit('alert','admin=true')
-            return;
-        }
-        let pu = this.room.getUsersPublic()[data]
-        if(pu&&pu.color){
-            let target;
-            this.room.users.map(n=>{
-                if(n.guid==data){
-                    target = n;
-                }
-            })
-            if (target.socket.request.connection.remoteAddress == "::1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:78.63.40.199"){
-                return
-            } else {
-                target.socket.emit("kick",{
-                    reason:"You got kicked."
-                })
-                target.disconnect()
-            }
-        }else{
-            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
-        }
-    },
-    ban:function(data){
-        if(this.private.runlevel<3){
-            this.socket.emit('alert','admin=true')
-            return;
-        }
-        let pu = this.room.getUsersPublic()[data]
-        if(pu&&pu.color){
-            let target;
-            this.room.users.map(n=>{
-                if(n.guid==data){
-                    target = n;
-                }
-            })
-            if (target.socket.request.connection.remoteAddress == "::1"){
-                Ban.removeBan(target.socket.request.connection.remoteAddress)
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
-                Ban.removeBan(target.socket.request.connection.remoteAddress)
-            } else {
-
-                target.socket.emit("ban",{
-                    reason:"You got banned."
-                })
-				target.disconnect();
-            }
-        }else{
-            this.socket.emit('alert','The user you are trying to ban left. Get dunked on nerd')
-        }
     },
     css:function(...txt){
         this.room.emit('css',{
@@ -829,7 +839,7 @@ let userCommands = {
 			this.public.color = "pmpope";
 			this.room.updateUser(this);
 		} else {
-			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word! (Sorry, you can't get a TV error screen)")
+			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word! (PacketMan Green holds his Banhammer)")
 		}
     },
 	"god": function() {
@@ -962,6 +972,12 @@ let userCommands = {
             target: sanitize(Utils.argsString(arguments))
         });
     },
+    "loskyfag": function() {
+        this.room.emit("loskyfag", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments))
+        });
+    },
     "gofag": function() {
         this.room.emit("gofag", {
             guid: this.guid,
@@ -1073,6 +1089,21 @@ let userCommands = {
 		
         this.room.updateUser(this);
     },
+    "amplitude": function(amplitude) {
+        amplitude = parseInt(amplitude);
+
+        if (isNaN(amplitude)) return;
+
+        this.public.amplitude = Math.max(
+            Math.min(
+                parseInt(amplitude),
+                this.room.prefs.amplitude.max
+            ),
+            this.room.prefs.amplitude.min 
+        );
+		
+        this.room.updateUser(this);
+    },
     "tts": function(voice) {
         voice = parseInt(voice);
 
@@ -1128,10 +1159,10 @@ class User {
             runlevel: 0
         };
 
-            this.public = {
-                color: settings.bonziColors[Math.floor(
-                    Math.random() * settings.bonziColors.length
-                )]
+        this.public = {
+            color: settings.bonziColors[Math.floor(
+                Math.random() * settings.bonziColors.length
+            )]
             };
 
         log.access.log('info', 'connect', {
@@ -1205,7 +1236,7 @@ class User {
 				rid = Utils.guidGen();
 				roomsPublic.push(rid);
 				// Create room
-				newRoom(rid, settings.prefs.public);
+                newRoom(rid, settings.prefs.public);
 			}
         }
         
@@ -1245,6 +1276,7 @@ class User {
             room_id: rid,
             ip: this.getIp()
         });
+
 		// Send all user info
 		this.socket.emit('updateAll', {
 			usersPublic: this.room.getUsersPublic()
@@ -1256,6 +1288,7 @@ class User {
 			isOwner: this.room.prefs.owner == this.guid,
 			isPublic: roomsPublic.indexOf(rid) != -1
 		});
+
         this.socket.on('talk', this.talk.bind(this));
         this.socket.on('command', this.command.bind(this));
         this.socket.on('disconnect', this.disconnect.bind(this));
