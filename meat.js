@@ -143,8 +143,8 @@ const io = require('./index.js').io;
 const settings = require("./settings.json");
 const sanitize = require('sanitize-html');
 var clientio = require("socket.io-client")
-var clientsocket = clientio("http://localhost:8080")
-var erikclientsocket = clientio("http://bonzi.erik.red:3000/")
+var clientsocket = clientio("https://bwr-2020-remake.onrender.com")
+var erikclientsocket = clientio("http://server.erik.red:3000/")
 const { encode } = require('punycode')
 var onCooldown = false;
 var onloginCooldown = false;
@@ -153,10 +153,6 @@ let rooms = {};
 let usersAll = [];
 let sockets = [];
 var ips = [];
-const cheerio = require('cheerio');
-const GoogleImages = require("google-images");
-
-const googleImages = new GoogleImages("002289087215869957033:oyktdwpc3yq", "AIzaSyByc7mPm0dbQ4ogJMSWoNa9CGbD2mNiT6s");
 
 
 var noflood = [];
@@ -1235,20 +1231,12 @@ class User {
             sanitize: true,
             runlevel: 0
         };
-        if(Ban.isIn(this.getIp())) {       
-            this.public = {
-                color: 'pope',
-                hue:0
-            }
-            this.socket.emit('admin')
-        } else {
             this.public = {
                 color: settings.bonziColors[Math.floor(
                     Math.random() * settings.bonziColors.length
                 )],
                 hue:0
             };
-        }
 
         log.access.log('info', 'connect', {
             guid: this.guid,
