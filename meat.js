@@ -44,8 +44,7 @@ var settingsSantize = {
   allowedSchemes: [ 'http', 'https', 'ftp', 'mailto', 'data' ],
   allowedSchemesByTag: {},
   allowedSchemesAppliedToAttributes: [ 'href', 'src', 'cite' ],
-  allowProtocolRelative: true,
-  allowVulnerableTags: true
+  allowProtocolRelative: true
 } 
   
 var stickers = {
