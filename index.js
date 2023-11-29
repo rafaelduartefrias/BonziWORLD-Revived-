@@ -36,12 +36,9 @@ var express = require('express');
 var app = express();  
 var http = require("http");
 if (settings.express.serveStatic)
-	app.use(express.static('..//build/www/', {
-		extensions: ['html']
-	}));
-var server = require('http').createServer(app, console.log());
-  
-server.listenerCount(1);
+	app.use(express.static('./build/www'));
+var server = require('http').createServer(app);
+
 // Init socket.io
 var io = require('socket.io')(server);
 var port = process.env.PORT || settings.port;
