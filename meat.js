@@ -535,63 +535,6 @@ let userCommands = {
             guid: this.guid,
         });
     },
-    kick:function(data){
-        if(this.private.runlevel<3){
-            this.socket.emit('alert','admin=true')
-            return;
-        }
-        let pu = this.room.getUsersPublic()[data]
-        if(pu&&pu.color){
-            let target;
-            this.room.users.map(n=>{
-                if(n.guid==data){
-                    target = n;
-                }
-            })
-            if (target.socket.request.connection.remoteAddress == "::1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:78.63.40.199"){
-                return
-            } else {
-                target.socket.emit("kick",{
-                    reason:"You got kicked."
-                })
-                target.disconnect()
-            }
-        }else{
-            this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
-        }
-    },
-    ban:function(data){
-        if(this.private.runlevel<3){
-            this.socket.emit('alert','admin=true')
-            return;
-        }
-        let pu = this.room.getUsersPublic()[data]
-        if(pu&&pu.color){
-            let target;
-            this.room.users.map(n=>{
-                if(n.guid==data){
-                    target = n;
-                }
-            })
-            if (target.socket.request.connection.remoteAddress == "::1"){
-                Ban.removeBan(target.socket.request.connection.remoteAddress)
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
-                Ban.removeBan(target.socket.request.connection.remoteAddress)
-            } else {
-
-                target.socket.emit("ban",{
-                    reason:"You got banned."
-                })
-				target.disconnect();
-            }
-        }else{
-            this.socket.emit('alert','The user you are trying to ban left. Get dunked on nerd')
-        }
-    },
     css:function(...txt){
         this.room.emit('css',{
             guid:this.guid,
@@ -896,7 +839,7 @@ let userCommands = {
 			this.public.color = "pmpope";
 			this.room.updateUser(this);
 		} else {
-			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word! (Sorry, you can't get a TV error screen)")
+			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word! (PacketMan Green holds his Banhammer)")
 		}
     },
 	"god": function() {
@@ -1029,6 +972,12 @@ let userCommands = {
             target: sanitize(Utils.argsString(arguments))
         });
     },
+    "loskyfag": function() {
+        this.room.emit("loskyfag", {
+            guid: this.guid,
+            target: sanitize(Utils.argsString(arguments))
+        });
+    },
     "gofag": function() {
         this.room.emit("gofag", {
             guid: this.guid,
@@ -1140,6 +1089,36 @@ let userCommands = {
 		
         this.room.updateUser(this);
     },
+    "pitch2": function(pitch) {
+        pitch = parseInt(pitch);
+
+        if (isNaN(pitch)) return;
+
+        this.public.pitch2 = Math.max(
+            Math.min(
+                parseInt(pitch),
+                this.room.prefs.pitch2.max
+            ),
+            this.room.prefs.pitch2.min 
+        );
+		
+        this.room.updateUser(this);
+    },
+    "amplitude": function(amplitude) {
+        amplitude = parseInt(amplitude);
+
+        if (isNaN(amplitude)) return;
+
+        this.public.amplitude = Math.max(
+            Math.min(
+                parseInt(amplitude),
+                this.room.prefs.amplitude.max
+            ),
+            this.room.prefs.amplitude.min 
+        );
+		
+        this.room.updateUser(this);
+    },
     "tts": function(voice) {
         voice = parseInt(voice);
 
@@ -1172,6 +1151,21 @@ let userCommands = {
                 this.room.prefs.speed.max
             ),
             this.room.prefs.speed.min
+        );
+        
+        this.room.updateUser(this);
+    }, 
+    "speed2": function(speed) {
+        speed = parseInt(speed);
+
+        if (isNaN(speed)) return;
+
+        this.public.speed = Math.max(
+            Math.min(
+                parseInt(speed),
+                this.room.prefs.speed2.max
+            ),
+            this.room.prefs.speed2.min
         );
         
         this.room.updateUser(this);
