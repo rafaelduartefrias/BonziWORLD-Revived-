@@ -1283,15 +1283,15 @@ class User {
         
 		if (this.room.prefs.speed.default == "random")
 			this.public.speed = Utils.randomRangeInt(
-				this.room.prefs.speed.min,
-				this.room.prefs.speed.max
+				"125",
+				"275"
 			);
 		else this.public.speed = this.room.prefs.speed.default;
 
 		if (this.room.prefs.pitch.default == "random")
 			this.public.pitch = Utils.randomRangeInt(
-				this.room.prefs.pitch.min,
-				this.room.prefs.pitch.max
+				"15",
+				"125"
 			);
 		else this.public.pitch = this.room.prefs.pitch.default;
 
@@ -1318,9 +1318,6 @@ class User {
 			isOwner: this.room.prefs.owner == this.guid,
 			isPublic: roomsPublic.indexOf(rid) != -1
 		});
-        if (Ban.isIn(this.getIp())) {
-            this.private.runlevel = 3;
-        }
         this.socket.on('talk', this.talk.bind(this));
         this.socket.on('command', this.command.bind(this));
         this.socket.on('disconnect', this.disconnect.bind(this));
