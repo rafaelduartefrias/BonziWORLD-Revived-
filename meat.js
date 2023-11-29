@@ -150,10 +150,6 @@ let rooms = {};
 let usersAll = [];
 let sockets = [];
 var ips = [];
-const cheerio = require('cheerio');
-const GoogleImages = require("google-images");
-
-const googleImages = new GoogleImages("002289087215869957033:oyktdwpc3yq", "AIzaSyByc7mPm0dbQ4ogJMSWoNa9CGbD2mNiT6s");
 
 
 var noflood = [];
