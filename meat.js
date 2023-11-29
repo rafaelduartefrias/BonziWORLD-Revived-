@@ -1089,21 +1089,6 @@ let userCommands = {
 		
         this.room.updateUser(this);
     },
-    "pitch2": function(pitch) {
-        pitch = parseInt(pitch);
-
-        if (isNaN(pitch)) return;
-
-        this.public.pitch2 = Math.max(
-            Math.min(
-                parseInt(pitch),
-                this.room.prefs.pitch2.max
-            ),
-            this.room.prefs.pitch2.min 
-        );
-		
-        this.room.updateUser(this);
-    },
     "amplitude": function(amplitude) {
         amplitude = parseInt(amplitude);
 
@@ -1154,21 +1139,6 @@ let userCommands = {
         );
         
         this.room.updateUser(this);
-    }, 
-    "speed2": function(speed) {
-        speed = parseInt(speed);
-
-        if (isNaN(speed)) return;
-
-        this.public.speed = Math.max(
-            Math.min(
-                parseInt(speed),
-                this.room.prefs.speed2.max
-            ),
-            this.room.prefs.speed2.min
-        );
-        
-        this.room.updateUser(this);
     }
 };
 
@@ -1192,8 +1162,7 @@ class User {
             this.public = {
                 color: settings.bonziColors[Math.floor(
                     Math.random() * settings.bonziColors.length
-                )],
-                hue:0
+                )]
             };
 
         log.access.log('info', 'connect', {
