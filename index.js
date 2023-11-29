@@ -35,7 +35,7 @@ const settings = require("./settings.json");
 var express = require('express');
 var app = express();
 if (settings.express.serveStatic)
-	app.use(express.static('../build/www'));
+	app.use(express.static('.//build/www/'));
 var server = require('http').createServer(app);
 
 // Init socket.io
@@ -60,11 +60,13 @@ const log2 = Log2.log;
 // Load ban list
 const Ban = require('./ban.js');
 Ban.init();
+var wtf = 
+['I hate pope beggars.', 'Time to meme!', 'A C I D  M O D E', "Do not beg!", 'Please, give me mercy!', 'No flooding!', 'UH OH RETARD ALERT', '** ERROR INTERNAL SYSTEM FAILURE **', 'Fagola!', 'Turret fagolas!', 'FUCK!', 'NO!\n MY MOM HAS A FIREWALL', "Eliot's Fun Box", "FUCK EM UP"]
 // Start actually listening
 server.listen(port, function () {
 	console.log(
-		" Welcome to BonziWORLD!\n",
-		"Time to meme!\n", 
+		" Welcome to BonziWORLD: Revived!\n",
+		" " + wtf[Math.floor(Math.random()*wtf.length)] + "\n", 
 		"----------------------\n",
 		"Server listening at port " + port,
 	);
