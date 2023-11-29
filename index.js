@@ -33,18 +33,15 @@ const settings = require("./settings.json");
 
 // Setup basic express server
 var express = require('express');
-var app = express();  
-var http = require("http");
+var app = express();
 if (settings.express.serveStatic)
-	app.use(express.static('../build/www/', {
-		extensions: ['html']
-	}));
-var server = require('http').createServer(app, console.log());
-  
-server.listenerCount(1);
+	app.use(express.static('.//build/www/'));
+var server = require('http').createServer(app);
+
 // Init socket.io
 var io = require('socket.io')(server);
 var port = process.env.PORT || settings.port;
+
 exports.io = io;
 
 // Init sanitize-html
@@ -55,10 +52,14 @@ const Log = require('./log.js');
 Log.init();
 const log = Log.log;
 
+const Log2 = require('./error.js');
+Log2.init();
+const log2 = Log2.log;
+
+
 // Load ban list
 const Ban = require('./ban.js');
 Ban.init();
- 
 // Start actually listening
 server.listen(port, function () {
 	console.log(
@@ -69,6 +70,9 @@ server.listen(port, function () {
 	);
 });
 app.use(express.static(__dirname + '/public'));
+
+
+
 // ========================================================================
 // Banning functions
 // ========================================================================
@@ -85,6 +89,7 @@ const Utils = require("./utils.js")
 
 const Meat = require("./meat.js");
 Meat.beat();
+
 // Console commands
 const Console = require('./console.js');
 Console.listen();
