@@ -34,7 +34,6 @@ const settings = require("./settings.json");
 // Setup basic express server
 var express = require('express');
 var app = express();  
-var cors = require("cors");
 var http = require("http");
 if (settings.express.serveStatic)
 	app.use(express.static('..//build/www/', {
@@ -69,7 +68,6 @@ server.listen(port, function () {
 		"Server listening at port " + port
 	);
 });
-app.options('*', cors())
 app.use(express.static(__dirname + '/public', {
 	extensions: ['html']
 }));
