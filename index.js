@@ -33,15 +33,15 @@ const settings = require("./settings.json");
 
 // Setup basic express server
 var express = require('express');
-var app = express();  
-var http = require("http");
+var app = express();
 if (settings.express.serveStatic)
-	app.use(express.static('./build/www'));
+	app.use(express.static('../build/www'));
 var server = require('http').createServer(app);
 
 // Init socket.io
 var io = require('socket.io')(server);
 var port = process.env.PORT || settings.port;
+
 exports.io = io;
 
 // Init sanitize-html
@@ -52,25 +52,29 @@ const Log = require('./log.js');
 Log.init();
 const log = Log.log;
 
+const Log2 = require('./error.js');
+Log2.init();
+const log2 = Log2.log;
+
+
 // Load ban list
 const Ban = require('./ban.js');
 Ban.init();
- 
 // Start actually listening
 server.listen(port, function () {
 	console.log(
 		" Welcome to BonziWORLD!\n",
 		"Time to meme!\n",
 		"----------------------\n",
-		"Server listening at port " + port
+		"Server listening at port " + port,
 	);
 });
-app.use(express.static(__dirname + '/public', {
-	extensions: ['html']
-}));
+app.use(express.static(__dirname + '/public'));
 app.use(function(req,res){
-	res.status(404).type('html').sendFile(__dirname + '/404.html')
-})
+	res.status(404).type('html').sendFile(__dirname + '/404.html');
+
+
+
 // ========================================================================
 // Banning functions
 // ========================================================================
@@ -87,6 +91,7 @@ const Utils = require("./utils.js")
 
 const Meat = require("./meat.js");
 Meat.beat();
+
 // Console commands
 const Console = require('./console.js');
 Console.listen();
