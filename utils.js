@@ -6,7 +6,7 @@ exports.guidGen = function() {
 			.toString(16)
 			.substring(1);
     };
-
+        
 	let id = '';
 	for (let i = 0; i < 4; i++)
 		id += s4();
