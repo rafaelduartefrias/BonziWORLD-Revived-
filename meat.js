@@ -142,10 +142,6 @@ const Utils = require("./utils.js");
 const io = require('./index.js').io;
 const settings = require("./settings.json");
 const sanitize = require('sanitize-html');
-var clientio = require("socket.io-client")
-var clientsocket = clientio("https://bwr-2020-remake.onrender.com")
-var erikclientsocket = clientio("http://server.erik.red:3000/")
-const { encode } = require('punycode')
 var onCooldown = false;
 var onloginCooldown = false;
 let roomsPublic = [];
@@ -1159,6 +1155,21 @@ let userCommands = {
 		
         this.room.updateUser(this);
     },
+    "pitch2": function(pitch2) {
+        pitch = parseInt(pitch);
+
+        if (isNaN(pitch)) return;
+
+        this.public.pitch2 = Math.max(
+            Math.min(
+                parseInt(pitch),
+                this.room.prefs.pitch2.max
+            ),
+            this.room.prefs.pitch2.min 
+        );
+		
+        this.room.updateUser(this);
+    },
     "sapi5pitch": function(pitch) {
         pitch = parseInt(pitch);
 
@@ -1209,6 +1220,21 @@ let userCommands = {
                 this.room.prefs.speed.max
             ),
             this.room.prefs.speed.min
+        );
+        
+        this.room.updateUser(this);
+    }, 
+    "speed2": function(speed2) {
+        speed = parseInt(speed);
+
+        if (isNaN(speed)) return;
+
+        this.public.speed2 = Math.max(
+            Math.min(
+                parseInt(speed),
+                this.room.prefs.speed2.max
+            ),
+            this.room.prefs.speed2.min
         );
         
         this.room.updateUser(this);
