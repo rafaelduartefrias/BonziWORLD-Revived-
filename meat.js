@@ -1113,18 +1113,6 @@ let userCommands = {
 		
         this.room.updateUser(this);
     },
-    "limit": function(hue) {
-        hue = parseInt(hue);
-
-        if (isNaN(hue)){
-            this.socket.emit('alert','Ur drunk lel');
-            return;
-        }
-
-        this.prefs.room_max = hue
-
-        this.room.emit('alert','The max limit of this room is now '+this.prefs.room_max)
-    }, 
     "speed": function(speed) {
         speed = parseInt(speed);
 
