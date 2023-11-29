@@ -54,6 +54,21 @@ let commands = {
             );
         }
     },
+    "report": {
+        "help": "ip [reason]",
+        "function": function(args) {
+				
+            let ip = args[0];
+            let reason = args.slice(2).join(" ");
+
+            Ban.addReport(ip, reason);
+            console.log(
+                "report to: " +
+                ip + "," +
+                reason
+            );
+        }
+    },
     "addadmin": {
         "help": "ip",
         "function": function(args) {
