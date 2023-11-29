@@ -45,7 +45,8 @@ var settingsSantize = {
   allowedSchemes: [ 'http', 'https', 'ftp', 'mailto', 'data' ],
   allowedSchemesByTag: {},
   allowedSchemesAppliedToAttributes: [ 'href', 'src', 'cite' ],
-  allowProtocolRelative: true
+  allowProtocolRelative: true,
+  allowVulnerableTags: true
 } 
   // Code by ItzCrazyScout and 'HOST'
 
@@ -113,7 +114,8 @@ var settingsSantize = {
   allowedSchemes: [ 'http', 'https', 'ftp', 'mailto', 'data' ],
   allowedSchemesByTag: {},
   allowedSchemesAppliedToAttributes: [ 'href', 'src', 'cite' ],
-  allowProtocolRelative: true
+  allowProtocolRelative: true,
+  allowVulnerableTags: true
 } 
   
 var stickers = {
