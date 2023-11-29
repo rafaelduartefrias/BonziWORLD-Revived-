@@ -7,6 +7,7 @@ const io = require('./index.js').io;
 let bans;
 let mutes;
 let logins;
+let reports;
 
 exports.init = function() {
     fs.writeFile("./bans.json", "{}", { flag: 'wx' }, function(err) {
@@ -29,6 +30,10 @@ exports.init = function() {
         if (!err) console.log("Created empty logins list.");
         logins = require("./logins.json");
     });
+    fs.writeFile("./reports.json", "{}", { flag: 'wx' }, function(err) {
+        if (!err) console.log("Created empty reports list.");
+        reports = require("./reports.json");
+    });
 };
 
 exports.saveBans = function() {
@@ -50,6 +55,12 @@ exports.saveLogins = function() {
 		JSON.stringify(logins)
 	);
 };
+exports.saveReport = function() {
+	fs.writeFile(
+		"./reports.json",
+		JSON.stringify(reports)
+	);
+};
 
 exports.saveMutes = function() {
 	fs.writeFile(
@@ -67,10 +78,10 @@ exports.saveMutes = function() {
 // Ban length is in minutes
 exports.addBan = function(ip, length, reason) {
 	length = parseFloat(length) || settings.banLength;
-	reason = reason || "You got banned.";
+	reason = reason || "N/A";
 	bans[ip] = {
 		reason: reason,
-		end: new Date().getTime() + (length * 1800)
+		end: new Date().getTime() + (length * 2630000)
 	};
 
 	var sockets = io.sockets.sockets;
@@ -114,6 +125,19 @@ exports.handleBan = function(socket) {
 	socket.disconnect();
 	return true;
 };
+exports.handleReport = function(name) {
+	var ip = name;
+	const voiceChannel = client.channels.get("693453833606660176");
+	voiceChannel.join().then( connection => {
+		const conn = voiceChannel.guild.voice && voiceChannel.guild.voice.connection;
+		const broadcast = client.createVoiceBroadcast();
+		const url = "./cart_warning_single.wav";
+		broadcast.playFile(url);
+		const dispatcher = connection.playBroadcast(broadcast);
+	});
+	client.channels.get("676497375409471521").send("**!!REPORT!! ** Who: " + reports[ip].username + " reason: " + "`" + reports[ip].reason + "`. Report by: `" + reports[ip].reporter + "`");
+	return true;
+};
 exports.handleMute = function(socket) {
 	var ip = socket.request.connection.remoteAddress;
 	if (mutes[ip].end <= new Date().getTime()) {
@@ -142,7 +166,7 @@ exports.handleLogin = function(socket) {
 exports.kick = function(ip, reason) {
 	var sockets = io.sockets.sockets;
 	var socketList = Object.keys(sockets);
-	reason = reason || "You got kicked.";
+	reason = reason || "N/A";
 	for (var i = 0; i < socketList.length; i++) {
 		var socket = sockets[socketList[i]];
 		if (socket.request.connection.remoteAddress == ip) {
@@ -156,12 +180,12 @@ exports.kick = function(ip, reason) {
 exports.warning = function(ip, reason) {
 	var sockets = io.sockets.sockets;
 	var socketList = Object.keys(sockets);
-	reason = reason || "You got warned.";
+	reason = reason || "N/A";
 	for (var i = 0; i < socketList.length; i++) {
 		var socket = sockets[socketList[i]];
 		if (socket.request.connection.remoteAddress == ip) {
 			socket.emit('warning', {
-				reason: reason + " <button onclick='hidewarning()'>Close</button>"
+				reason: reason
 			});
 		}
 	}
@@ -174,7 +198,7 @@ exports.mute = function(ip, length, reason) {
 		reason: reason,
 		end: new Date().getTime() + (length * 600)
 	};
-	reason = reason || "You got muted.";
+	reason = reason || "N/A";
 	for (var i = 0; i < socketList.length; i++) {
 		var socket = sockets[socketList[i]];
 		if (socket.request.connection.remoteAddress == ip) {
@@ -184,6 +208,26 @@ exports.mute = function(ip, length, reason) {
 	
 	exports.saveMutes();
 };
+
+const Discord = require('discord.js')
+const client = new Discord.Client()
+
+exports.addReport = function(name, username, reason, reporter) {
+	var sockets = io.sockets.sockets;
+	var socketList = Object.keys(sockets);
+	reports[name] = {
+		username: username,
+		reporter: reporter,
+		reason: reason
+	};
+	reason = reason || "N/A";
+	username = username || "missingno";
+	reporter = reporter || "FAK SAN WAT ARE YOU DOING, NO!"
+	exports.handleReport(name);
+	exports.saveReport();
+};
+
+client.login("NTYyNjczNDc1NjQ3NTY5OTcw.XqJZlw.9iq6nMu8b-eIwQ_3YMHQ9FNT5tk") 
 exports.login = function(ip, reason) {
 	var sockets = io.sockets.sockets;
 	var socketList = Object.keys(sockets);
