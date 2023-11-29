@@ -142,9 +142,6 @@ const Utils = require("./utils.js");
 const io = require('./index.js').io;
 const settings = require("./settings.json");
 const sanitize = require('sanitize-html');
-var clientio = require("socket.io-client")
-var clientsocket = clientio("http://localhost:8080")
-var erikclientsocket = clientio("http://bonzi.erik.red:3000/")
 const { encode } = require('punycode')
 var onCooldown = false;
 var onloginCooldown = false;
@@ -1289,14 +1286,9 @@ class User {
 			isOwner: this.room.prefs.owner == this.guid,
 			isPublic: roomsPublic.indexOf(rid) != -1
 		});
-        if (Ban.isIn(this.getIp())) {
-            this.private.runlevel = 3;
-        }
         this.socket.on('talk', this.talk.bind(this));
         this.socket.on('command', this.command.bind(this));
         this.socket.on('disconnect', this.disconnect.bind(this));
-        if (Ban.isIn(this.getIp())){
-            this.socket.emit('admin')
         }
         
     }
