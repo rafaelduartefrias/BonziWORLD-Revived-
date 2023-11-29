@@ -69,9 +69,6 @@ server.listen(port, function () {
 	);
 });
 app.use(express.static(__dirname + '/public'));
-app.use(function(req,res){
-	res.status(404).type('html').sendFile(__dirname + '/404.html')
-})
 // ========================================================================
 // Banning functions
 // ========================================================================
