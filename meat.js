@@ -933,6 +933,24 @@ let userCommands = {
 		}
     },
 	
+    "pope5": function() {
+		if (this.private.runlevel === 3) { // removing this will cause chaos
+			this.public.color = "maxpope";
+			this.room.updateUser(this);
+		} else {
+			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word!")
+		}
+    },
+	
+    "pope6": function() {
+		if (this.private.runlevel === 3) { // removing this will cause chaos
+			this.public.color = "pmpope";
+			this.room.updateUser(this);
+		} else {
+			this.socket.emit("alert", "Ah ah ah! You didn't say the magic word!")
+		}
+    },
+	
 	"god": function() {
 		if (this.private.runlevel === 3) // removing this will cause chaos
 		{
