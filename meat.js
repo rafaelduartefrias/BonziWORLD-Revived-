@@ -438,18 +438,10 @@ let userCommands = {
                     target = n;
                 }
             })
-            if (target.socket.request.connection.remoteAddress == "::1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:127.0.0.1"){
-                return
-            } else if (target.socket.request.connection.remoteAddress == "::ffff:78.63.40.199"){
-                return
-            } else {
                 target.socket.emit("kick",{
                     reason:"You got kicked."
                 })
                 target.disconnect()
-            }
         }else{
             this.socket.emit('alert','The user you are trying to kick left. Get dunked on nerd')
         }
@@ -1137,21 +1129,15 @@ let userCommands = {
             }
         })
     },
-    "pitch": function(pitch) {
-        pitch = parseInt(pitch);
+  pitch: function (pitch) {
+      pitch = parseInt(pitch);
 
-        if (isNaN(pitch)) return;
+      if (isNaN(pitch)) return;
 
-        this.public.pitch = Math.max(
-            Math.min(
-                parseInt(pitch),
-                this.room.prefs.pitch.max
-            ),
-            this.room.prefs.pitch.min 
-        );
-		
-        this.room.updateUser(this);
-    },
+      this.public.pitch = pitch;
+
+      this.room.updateUser(this);
+  },
     "sapi5pitch": function(pitch) {
         pitch = parseInt(pitch);
 
@@ -1191,21 +1177,15 @@ let userCommands = {
 
         this.room.emit('alert','The max limit of this room is now '+this.prefs.room_max)
     }, 
-    "speed": function(speed) {
-        speed = parseInt(speed);
+  speed: function (speed) {
+      speed = parseInt(speed);
 
-        if (isNaN(speed)) return;
+      if (isNaN(speed)) return;
 
-        this.public.speed = Math.max(
-            Math.min(
-                parseInt(speed),
-                this.room.prefs.speed.max
-            ),
-            this.room.prefs.speed.min
-        );
-        
-        this.room.updateUser(this);
-    }
+      this.public.speed = speed;
+
+      this.room.updateUser(this);
+  }
 };
 
 
